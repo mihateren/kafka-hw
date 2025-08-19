@@ -1,0 +1,26 @@
+kafka:
+  bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+  schema-registry-url: ${SCHEMA_REGISTRY_URL:http://90.156.226.5:8081}
+  consumers:
+    common:
+      auto-offset-reset: earliest
+      auto-commit: true
+    json:
+      topic: demo.orders.json
+      group-id: demo.orders.json.group
+  producers:
+    json:
+      topic: demo.orders.json
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/analytics_db
+    username: postgres
+    password: postgres
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+
+server:
+  port: 8080

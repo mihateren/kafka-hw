@@ -1,5 +1,7 @@
 package com.example.kafka.producer;
 
+import com.example.kafka.repository.PostgresRepository;
+import com.example.kafka.repository.dto.ClickEvent;
 import com.example.kafka.web.dto.Click;
 import com.example.kafka.web.dto.Meta;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +17,16 @@ import java.util.concurrent.CompletableFuture;
 public class KafkaProducer {
 
     private final KafkaTemplate<String, Click> jsonTemplate;
+    private final PostgresRepository repository;
 
     public CompletableFuture<Meta> sendClick(Click message) {
+        repository.save(new ClickEvent(
+                        null,
+                        message.getUserId(),
+                        message.getPage(),
+                        message.getTime()
+                )
+        );
         return jsonTemplate.send("clicks.incoming", message)
                 .thenApply(result -> {
                     RecordMetadata metadata = result.getRecordMetadata();
